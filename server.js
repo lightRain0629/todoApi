@@ -11,16 +11,17 @@ const config = {
   password: process.env.DB_PASSWORD,
   server: "localhost",
   database: process.env.DB_NAME,
-  options: {
-    encrypt: true, // для Azure, если используется
-    trustServerCertificate: true, // для работы с сертификатами
-  },
+  //   options: {
+  //     encrypt: true, // для Azure, если используется
+  //     trustServerCertificate: true, // для работы с сертификатами
+  //   },
 };
 
 // Конфигурация и подключение к базе данных
 async function getTodos() {
   try {
     await sql.connect(config);
+    console.log(JSON.stringify(sql));
     const result = await sql.query("SELECT * FROM Tasks");
     console.log("getTodos", JSON.stringify(result));
     return result.recordset;
