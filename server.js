@@ -9,26 +9,33 @@ const app = express();
 const config = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  server: "localhost",
+  server: "localhost", // Или ваш сервер
   database: process.env.DB_NAME,
-  //   options: {
-  //     encrypt: true, // для Azure, если используется
-  //     trustServerCertificate: true, // для работы с сертификатами
-  //   },
+  options: {
+    encrypt: true, // Используется для Azure, если это не Azure, можно установить false
+    trustServerCertificate: true, // Для работы с самоподписанными сертификатами
+  },
 };
 
 // Конфигурация и подключение к базе данных
 async function getTodos() {
+  let pool;
   try {
-    await sql.connect(config);
-    console.log(JSON.stringify(sql));
-    const result = await sql.query("SELECT * FROM Tasks");
-    console.log("getTodos", JSON.stringify(result));
+    // Подключаемся к базе данных
+    pool = await sql.connect(config);
+    console.log("Connected to the database");
+
+    // Выполняем запрос
+    const result = await pool.request().query("SELECT * FROM Tasks");
     return result.recordset;
   } catch (err) {
-    console.error(err);
-    console.log("getTodos error", JSON.stringify(err));
+    console.error("Error getting todos:", err);
     throw new Error("Database query failed");
+  } finally {
+    // Закрытие соединения с базой данных
+    if (pool) {
+      await pool.close();
+    }
   }
 }
 
@@ -38,7 +45,7 @@ app.get("/api/todoList", async (req, res) => {
     const todos = await getTodos();
     res.json(todos);
   } catch (err) {
-    console.log("endpoint error", JSON.stringify(err));
+    console.error("Error in /api/todoList endpoint:", err);
     res.status(500).json({ message: "Error retrieving data" });
   }
 });
