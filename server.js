@@ -21,7 +21,7 @@ const config = {
 async function getTodos() {
   try {
     await sql.connect(config);
-    const result = await sql.query('SELECT * FROM Todos');
+    const result = await sql.query('SELECT * FROM Tasks');
     return result.recordset;
   } catch (err) {
     console.error(err);
