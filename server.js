@@ -9,7 +9,7 @@ const app = express();
 const config = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  server: "http://localhost",
+  server: "51.120.5.80",
   database: process.env.DB_NAME,
   //   options: {
   //     encrypt: true, // для Azure, если используется
