@@ -19,25 +19,29 @@ const config = {
 
 // Конфигурация и подключение к базе данных
 async function getTodos() {
-  let pool;
-  try {
-    // Подключаемся к базе данных
-    pool = await sql.connect(config);
-    console.log("Connected to the database");
-
-    // Выполняем запрос
-    const result = await pool.request().query("SELECT * FROM Tasks");
-    return result.recordset;
-  } catch (err) {
-    console.error("Error getting todos:", err);
-    throw new Error("Database query failed");
-  } finally {
-    // Закрытие соединения с базой данных
-    if (pool) {
-      await pool.close();
+    let pool;
+    try {
+      // Подключаемся к базе данных
+      pool = await sql.connect(config);
+      console.log("Connected to the database");
+  
+      // Убедитесь, что таблица существует в нужной схеме
+      const result = await pool.request().query("SELECT * FROM dbo.Tasks");  // Если схема 'dbo'
+      
+      if (result.recordset.length === 0) {
+        throw new Error("No tasks found.");
+      }
+  
+      return result.recordset;
+    } catch (err) {
+      console.error("Error getting todos:", err);
+      throw new Error("Database query failed");
+    } finally {
+      if (pool) {
+        await pool.close();
+      }
     }
   }
-}
 
 // Эндпоинт для получения списка задач
 app.get("/api/todoList", async (req, res) => {
