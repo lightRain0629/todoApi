@@ -1,6 +1,6 @@
-require('dotenv').config();
-const express = require('express');
-const sql = require('mssql');
+require("dotenv").config();
+const express = require("express");
+const sql = require("mssql");
 
 // Инициализация Express
 const app = express();
@@ -9,10 +9,10 @@ const app = express();
 const config = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  server: 'localhost',
+  server: "localhost",
   database: process.env.DB_NAME,
   options: {
-    encrypt: true,  // для Azure, если используется
+    encrypt: true, // для Azure, если используется
     trustServerCertificate: true, // для работы с сертификатами
   },
 };
@@ -21,21 +21,24 @@ const config = {
 async function getTodos() {
   try {
     await sql.connect(config);
-    const result = await sql.query('SELECT * FROM Tasks');
+    const result = await sql.query("SELECT * FROM Tasks");
+    console.log("getTodos", JSON.stringify(result));
     return result.recordset;
   } catch (err) {
     console.error(err);
-    throw new Error('Database query failed');
+    console.log("getTodos error", JSON.stringify(err));
+    throw new Error("Database query failed");
   }
 }
 
 // Эндпоинт для получения списка задач
-app.get('/api/todoList', async (req, res) => {
+app.get("/api/todoList", async (req, res) => {
   try {
     const todos = await getTodos();
     res.json(todos);
   } catch (err) {
-    res.status(500).json({ message: 'Error retrieving data' });
+    console.log("endpoint error", JSON.stringify(err));
+    res.status(500).json({ message: "Error retrieving data" });
   }
 });
 
