@@ -18,7 +18,7 @@ const config = {
 };
 
 // Конфигурация и подключение к базе данных
-async function getTodos() {
+async function getDbInfo() {
     let pool;
     try {
       // Подключаемся к базе данных
@@ -45,12 +45,12 @@ async function getTodos() {
   }
 
 // Эндпоинт для получения списка задач
-app.get("/api/todoList", async (req, res) => {
+app.get("/api/db-info", async (req, res) => {
   try {
-    const todos = await getTodos();
+    const todos = await getDbInfo();
     res.json(todos);
   } catch (err) {
-    console.error("Error in /api/todoList endpoint:", err);
+    console.error("Error in /api/db-info endpoint:", err);
     res.status(500).json({ message: "Error retrieving data" });
   }
 });
