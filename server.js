@@ -26,7 +26,8 @@ async function getTodos() {
       console.log("Connected to the database");
   
       // Убедитесь, что таблица существует в нужной схеме
-      const result = await pool.request().query("SELECT * FROM dbo.Tasks");  // Если схема 'dbo'
+      const result = await pool.request().query("SELECT @@VERSION");  // Если схема 'dbo'
+    //   const result = await pool.request().query("SELECT * FROM dbo.Tasks");  // Если схема 'dbo'
       
       if (result.recordset.length === 0) {
         throw new Error("No tasks found.");
