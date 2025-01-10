@@ -30,7 +30,7 @@ async function getTodos() {
 }
 
 // Эндпоинт для получения списка задач
-app.get('/todoList', async (req, res) => {
+app.get('/api/todoList', async (req, res) => {
   try {
     const todos = await getTodos();
     res.json(todos);
