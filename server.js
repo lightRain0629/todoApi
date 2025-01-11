@@ -102,9 +102,7 @@ async function getTasks() {
     console.log("Connected to the database");
 
     // Убедитесь, что таблица существует в нужной схеме
-    const result = await pool
-      .request()
-      .query("SELECT Title FROM dbo.Tasks"); // Если схема 'dbo'
+    const result = await pool.request().query("SELECT Title FROM dbo.Tasks"); // Если схема 'dbo'
     //   const result = await pool.request().query("SELECT * FROM dbo.Tasks");  // Если схема 'dbo'
 
     if (result.recordset.length === 0) {
@@ -129,7 +127,7 @@ app.get("/api/tasks", async (req, res) => {
     res.json(todos);
   } catch (err) {
     console.error("Error in /api/db-list endpoint:", err);
-    res.status(500).json({ message: "Error retrieving data" });
+    res.status(500).json({ message: JSON.stringify(err) });
   }
 });
 
