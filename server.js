@@ -104,7 +104,7 @@ async function getTasks() {
     // Убедитесь, что таблица существует в нужной схеме
     const result = await pool
       .request()
-      .query("SELECT * FROM TodoApp.dbo.Tasks"); // Если схема 'dbo'
+      .query("SELECT Title FROM dbo.Tasks"); // Если схема 'dbo'
     //   const result = await pool.request().query("SELECT * FROM dbo.Tasks");  // Если схема 'dbo'
 
     if (result.recordset.length === 0) {
