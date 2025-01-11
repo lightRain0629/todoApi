@@ -19,30 +19,30 @@ const config = {
 
 // Конфигурация и подключение к базе данных
 async function getDbInfo() {
-    let pool;
-    try {
-      // Подключаемся к базе данных
-      pool = await sql.connect(config);
-      console.log("Connected to the database");
-  
-      // Убедитесь, что таблица существует в нужной схеме
-      const result = await pool.request().query("SELECT @@VERSION");  // Если схема 'dbo'
+  let pool;
+  try {
+    // Подключаемся к базе данных
+    pool = await sql.connect(config);
+    console.log("Connected to the database");
+
+    // Убедитесь, что таблица существует в нужной схеме
+    const result = await pool.request().query("SELECT @@VERSION"); // Если схема 'dbo'
     //   const result = await pool.request().query("SELECT * FROM dbo.Tasks");  // Если схема 'dbo'
-      
-      if (result.recordset.length === 0) {
-        throw new Error("No tasks found.");
-      }
-  
-      return result.recordset;
-    } catch (err) {
-      console.error("Error getting todos:", err);
-      throw new Error("Database query failed");
-    } finally {
-      if (pool) {
-        await pool.close();
-      }
+
+    if (result.recordset.length === 0) {
+      throw new Error("No tasks found.");
+    }
+
+    return result.recordset;
+  } catch (err) {
+    console.error("Error getting todos:", err);
+    throw new Error("Database query failed");
+  } finally {
+    if (pool) {
+      await pool.close();
     }
   }
+}
 
 // Эндпоинт для получения списка задач
 app.get("/api/db-info", async (req, res) => {
@@ -51,6 +51,45 @@ app.get("/api/db-info", async (req, res) => {
     res.json(todos);
   } catch (err) {
     console.error("Error in /api/db-info endpoint:", err);
+    res.status(500).json({ message: "Error retrieving data" });
+  }
+});
+
+async function getDbList() {
+  let pool;
+  try {
+    // Подключаемся к базе данных
+    pool = await sql.connect(config);
+    console.log("Connected to the database");
+
+    // Убедитесь, что таблица существует в нужной схеме
+    const result = await pool
+      .request()
+      .query("SELECT name FROM master.dbo.sysdatabases"); // Если схема 'dbo'
+    //   const result = await pool.request().query("SELECT * FROM dbo.Tasks");  // Если схема 'dbo'
+
+    if (result.recordset.length === 0) {
+      throw new Error("No tasks found.");
+    }
+
+    return result.recordset;
+  } catch (err) {
+    console.error("Error getting todos:", err);
+    throw new Error("Database query failed");
+  } finally {
+    if (pool) {
+      await pool.close();
+    }
+  }
+}
+
+// Эндпоинт для получения списка задач
+app.get("/api/db-list", async (req, res) => {
+  try {
+    const todos = await getDbList();
+    res.json(todos);
+  } catch (err) {
+    console.error("Error in /api/db-list endpoint:", err);
     res.status(500).json({ message: "Error retrieving data" });
   }
 });
